@@ -148,6 +148,16 @@ def split_inp(regex):
     return [front,opr,end]
 
 
+def match_set(start,end,inp,splitted_words,match_len):
+
+    for i in splitted_words:
+        to_check = i+end
+        [is_matched,start_len,end_len] = match(
+            start,to_check,inp,match_len
+        )
+        if(is_matched):
+            return [is_matched,start_len,end_len]
+    return [False,None,None]
 
 
 def match(start,regex,inp,match_len = 0):
@@ -193,6 +203,10 @@ def match(start,regex,inp,match_len = 0):
                 # print(inp[0])
                 return match(start,end,inp[1:],match_len+1)
     
+    elif(opr == "("):
+        splitted_words = front[1:-1].split("|")
+        return match_set(start,end,inp,splitted_words,match_len)
+    
     # elif(front[0] == "."):
     #     # if(front[0] == inp[0]):
     #         # print(front,"hh")
@@ -213,11 +227,11 @@ def parse(regex,inp):
 
     matched_strings = []
     match_details = ""
-    # for i in range(len(inp)):
-    match_details = match(0,regex,inp[0:],0)
+    for i in range(len(inp)):
+        match_details = match(i,regex,inp[i:],0)
         # print(match_details)
-    if(match_details[0]):
-        matched_strings.append([match_details[1],match_details[2]]) 
+        if(match_details[0]):
+            matched_strings.append([match_details[1],match_details[2]]) 
         # print(match_details)
         # if(not match_details[0]):
             # matched_strings.append([False])
@@ -225,8 +239,8 @@ def parse(regex,inp):
 
 
 def main():
-    regex = "[ab]*.d?c"
-    inp = "aba7dc"
+    regex = "(a|b).d?c"
+    inp = "bcc"
     # front,opr,end = split_inp(regex)
     # print(front,opr,end)
     # print(parse(regex,inp))
