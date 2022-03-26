@@ -3,7 +3,6 @@
 def match_star(start,front,end,inp,match_len):
 
     matched_len = 0
-
     while(1):
         to_check = front * matched_len
         [is_matched,start_len,end_len] = match(
@@ -24,6 +23,31 @@ def match_star(start,front,end,inp,match_len):
         else:
             return [is_matched,start_len,end_len]
     
+    return [False,None,None]
+
+def match_question(start,front,end,inp,match_len):
+
+    matched_len = 0
+
+    while(matched_len <=1):
+        to_check = front * matched_len
+        [is_matched,start_len,end_len] = match(
+            start,to_check,inp,match_len
+        )
+        if(not is_matched):
+            break
+        else:
+            matched_len+=1
+     
+    while(matched_len >= 0):
+        to_check = (front * matched_len)+end
+        [is_matched,start_len,end_len] = match(
+            start,to_check,inp,match_len
+        )
+        if(not is_matched):
+            matched_len-=1
+        else:
+            return [is_matched,start_len,end_len]
     return [False,None,None]
 
 def match_plus(start,front,end,inp,match_len):
@@ -69,7 +93,7 @@ def split_inp(regex):
 
     """splits the regex"""
 
-    list_of_op = ["*","?","+","."]
+    list_of_op = ["*","?","+"]
     close_brac = 0
     front,end,opr = None,None,None
     flag = False
@@ -79,7 +103,10 @@ def split_inp(regex):
         close_brac = regex.find("]")
         front = regex[:close_brac+1]
         end = regex[close_brac+1:]
+        opr = "["
         flag = True
+        # print(front,opr,end)
+
         # return [front,"[",end]
     
     # if it is a () bracket
@@ -88,26 +115,29 @@ def split_inp(regex):
         front = regex[:close_brac+1]
         end = regex[close_brac+1:]
         flag = True
+        opr = "("
         # return [front,"(",end]
     
+    else:
+        front = regex[0]
+        end = regex[1:]
+    
     # print(regex,close_brac)
-    if(flag and len(regex) > 1 and regex[close_brac+1] in list_of_op) :
+    if(flag and len(regex) > 1 and (close_brac+1) < len(regex) and regex[close_brac+1] in list_of_op) :
         # index_op = 1
         front = regex[:close_brac+1]
         end = regex[close_brac+2:]
         opr = regex[close_brac+1]
     
     # any symbol
-    elif(len(regex) > 1 and regex[close_brac+1] in list_of_op) :
+    elif(len(regex) > 1 and (close_brac+1) < len(regex) and regex[close_brac+1] in list_of_op) :
         # index_op = 1
         front = regex[:close_brac+1]
         end = regex[close_brac+2:]
         opr = regex[close_brac+1]
         # return [front,opr,end]
         # index_op = find_op(regex)
-    else:
-        front = regex[0]
-        end = regex[1:]
+    
         # # if there is no operator
         # if(index_op == -1):
         # return [regex[0],None,regex[1:]]
@@ -140,7 +170,7 @@ def match(start,regex,inp,match_len = 0):
     
     if(opr == "*"):
         if(front[0] == "["):
-            return match_star(start,front[1:-1],end,inp,match_len)
+            return match_star(start,front,end,inp,match_len)
         else:
             return match_star(start,front,end,inp,match_len)
     
@@ -150,17 +180,27 @@ def match(start,regex,inp,match_len = 0):
         else:
             return match_plus(start,front,end,inp,match_len)
     
+    if(opr == "?"):
+        if(front[0] == "["):
+            return match_plus(start,front[1:-1],end,inp,match_len)
+        else:
+            return match_plus(start,front,end,inp,match_len)
+    
+
     elif(opr == "["):
         for i in range(1,len(front)):
             if(inp[0] == front[i]):
                 # print(inp[0])
                 return match(start,end,inp[1:],match_len+1)
-    elif(opr == "."):
-        return match(start,end,inp[1:],match_len+1)
-
     
+    # elif(front[0] == "."):
+    #     # if(front[0] == inp[0]):
+    #         # print(front,"hh")
+    #         # return match(start,end,inp[1:],match_len+1)
+    #     return match(start,end,inp[1:],match_len)
+
     else:
-        if(front[0] == inp[0]):
+        if(front[0] == inp[0] or front[0] == "."):
             # print(front,"hh")
             return match(start,end,inp[1:],match_len+1)
     
@@ -185,8 +225,8 @@ def parse(regex,inp):
 
 
 def main():
-    regex = "d+[ab]+c"
-    inp = "adababc"
+    regex = "[ab]*.c"
+    inp = "aba7c"
     # front,opr,end = split_inp(regex)
     # print(front,opr,end)
     # print(parse(regex,inp))
