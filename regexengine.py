@@ -182,9 +182,9 @@ def match(start,regex,inp,match_len = 0):
     
     if(opr == "?"):
         if(front[0] == "["):
-            return match_plus(start,front[1:-1],end,inp,match_len)
+            return match_question(start,front[1:-1],end,inp,match_len)
         else:
-            return match_plus(start,front,end,inp,match_len)
+            return match_question(start,front,end,inp,match_len)
     
 
     elif(opr == "["):
@@ -213,11 +213,11 @@ def parse(regex,inp):
 
     matched_strings = []
     match_details = ""
-    for i in range(len(inp)):
-        match_details = match(i,regex,inp[i:],0)
+    # for i in range(len(inp)):
+    match_details = match(0,regex,inp[0:],0)
         # print(match_details)
-        if(match_details[0]):
-           matched_strings.append([match_details[1],match_details[2]]) 
+    if(match_details[0]):
+        matched_strings.append([match_details[1],match_details[2]]) 
         # print(match_details)
         # if(not match_details[0]):
             # matched_strings.append([False])
@@ -225,8 +225,8 @@ def parse(regex,inp):
 
 
 def main():
-    regex = "[ab]*.c"
-    inp = "aba7c"
+    regex = "[ab]*.d?c"
+    inp = "aba7dc"
     # front,opr,end = split_inp(regex)
     # print(front,opr,end)
     # print(parse(regex,inp))
