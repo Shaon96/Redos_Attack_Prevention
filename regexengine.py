@@ -162,15 +162,24 @@ def match_set(start,end,inp,splitted_words,match_len):
 
 def match(start,regex,inp,match_len = 0):
 
+
     # print(regex,inp)
     if(inp == "" and regex == ""):
         return [True, start, start+match_len]
 
     if(inp == ""):
-        return [False,4,5]
+        return [False,None,None]
 
     if(regex == ""):
         return [True, start, start+match_len]
+
+    if(regex == "$"):
+        if(inp == ""):
+            return [True, start, start+match_len]
+        else:
+            return [False,None,None]
+
+
     
     front,opr,end = split_inp(regex)
 
@@ -227,26 +236,30 @@ def parse(regex,inp):
 
     matched_strings = []
     match_details = ""
-    for i in range(len(inp)):
-        match_details = match(i,regex,inp[i:],0)
+    # for i in range(len(inp)):
+    match_details = match(0,regex,inp[0:],0)
         # print(match_details)
-        if(match_details[0]):
-            matched_strings.append([match_details[1],match_details[2]]) 
+    if(match_details[0]):
+        matched_strings.append([match_details[1],match_details[2]]) 
         # print(match_details)
         # if(not match_details[0]):
             # matched_strings.append([False])
     return matched_strings
 
-
+import time
 def main():
-    regex = "(a|b).d?c"
-    inp = "bcc"
+
+    start_time = time.time()
+    regex = "(a+)+"
+    inp = "aaaaaaaaaaaaaaaaaaa9"
     # front,opr,end = split_inp(regex)
     # print(front,opr,end)
     # print(parse(regex,inp))
     # parse(regex,inp)
     for i in parse(regex,inp):
         print(inp[i[0]:i[1]])
+    
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 if __name__  == "__main__":
     main()
