@@ -250,8 +250,8 @@ import time
 def main():
 
     start_time = time.time()
-    regex = "(a+)+"
-    inp = "aaaaaaaaaaaaaaaaaaa9"
+    regex = "A(B|C+)+D"
+    inp = "ACCCCCCCCCCCCCCCCCCCX"
     # front,opr,end = split_inp(regex)
     # print(front,opr,end)
     # print(parse(regex,inp))
