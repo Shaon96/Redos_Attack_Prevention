@@ -1,6 +1,4 @@
 
-from numpy import index_exp
-
 
 def match_star(start,front,end,inp,match_len):
 
@@ -28,7 +26,30 @@ def match_star(start,front,end,inp,match_len):
     
     return [False,None,None]
 
+def match_plus(start,front,end,inp,match_len):
 
+    matched_len = 0
+
+    while(1):
+        to_check = front * matched_len
+        [is_matched,start_len,end_len] = match(
+            start,to_check,inp,match_len
+        )
+        if(not is_matched):
+            break
+        else:
+            matched_len+=1
+     
+    while(matched_len >= 1):
+        to_check = (front * matched_len)+end
+        [is_matched,start_len,end_len] = match(
+            start,to_check,inp,match_len
+        )
+        if(not is_matched):
+            matched_len-=1
+        else:
+            return [is_matched,start_len,end_len]
+    return [False,None,None]
 
 def find_op(regex):
 
@@ -123,6 +144,12 @@ def match(start,regex,inp,match_len = 0):
         else:
             return match_star(start,front,end,inp,match_len)
     
+    if(opr == "+"):
+        if(front[0] == "["):
+            return match_plus(start,front[1:-1],end,inp,match_len)
+        else:
+            return match_plus(start,front,end,inp,match_len)
+    
     elif(opr == "["):
         for i in range(1,len(front)):
             if(inp[0] == front[i]):
@@ -158,8 +185,8 @@ def parse(regex,inp):
 
 
 def main():
-    regex = "ab*c"
-    inp = "aababc"
+    regex = "d+[ab]+c"
+    inp = "adababc"
     # front,opr,end = split_inp(regex)
     # print(front,opr,end)
     # print(parse(regex,inp))
