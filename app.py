@@ -1,5 +1,6 @@
 from flask import Flask, session, render_template, request, redirect, flash,url_for
-import regex as re
+# import regex as re
+import RegexEngineReDoSSolved as re
 
 
 app = Flask(__name__)

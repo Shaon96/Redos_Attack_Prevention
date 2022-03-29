@@ -236,6 +236,7 @@ def match_regex_inp(inp):
 
     start_time = time.time()
     regex = "A(B|C+)+D"
+    # regex = "(a*)a"
     for i in parse(regex, inp):
         print("--- %s seconds ---" % (time.time() - start_time))
         return i[0]
