@@ -1,11 +1,9 @@
-
-
-from tabnanny import check
 import time
 
 vertex_offset_map = {}
 index_vertex_map = {}
 vertex_count = 0
+regex_g = "A*C"
 
 def checkKey(dict, key):
     if key in dict.keys():
@@ -13,70 +11,7 @@ def checkKey(dict, key):
     else:
         return False
 
-def match_star(start, front, end, inp, match_len, regex_offset=0):
 
-    """It matches the data in input 
-    which is suurounded by *
-    """
-    print("Inside match_star :")
-    print("start = ")
-    print(start)
-    print("front = ")
-    print(front)
-    print("end = ")
-    print(end)
-    print("inp = ")
-    print(inp)
-    print("match_len = ")
-    print(match_len)
-    matched_len = 0
-
-
-    vertex_offset = index_vertex_map[regex_offset]
-
-    if checkKey(vertex_offset_map, vertex_offset):
-        if checkKey(vertex_offset_map[vertex_offset], inp):
-            return vertex_offset_map[vertex_offset][inp]
-
-    # matches the letter by increasing inp
-    # by one at each step
-    while(1):
-        to_check = front * matched_len
-        # print("to_check = ")
-        # print(to_check)
-        [is_matched, start_len, end_len] = match(
-            start, to_check, inp, match_len
-        )
-        if(not is_matched):
-            break
-        else:
-            matched_len += 1
-
-
-    # If the enumeration is more than requied
-    # it decreases the length 
-    while(matched_len >= 0):
-        to_check = (front * matched_len)+end
-        [is_matched, start_len, end_len] = match(
-            start, to_check, inp, match_len, regex_offset
-        )
-        if(not is_matched):
-            matched_len -= 1
-        else:
-            if checkKey(vertex_offset_map, regex_offset):
-                vertex_offset_map[vertex_offset][inp] = [is_matched, start_len, end_len]
-            else:
-                vertex_offset_map[vertex_offset] = {}
-                vertex_offset_map[vertex_offset][inp] = [is_matched, start_len, end_len]
-
-            return [is_matched, start_len, end_len]
-
-    if checkKey(vertex_offset_map, regex_offset):
-        vertex_offset_map[vertex_offset][inp] = [False, None, None]
-    else:
-        vertex_offset_map[vertex_offset] = {}
-        vertex_offset_map[vertex_offset][inp] = [False, None, None]
-    return [False, None, None]
 
 
 def match_question(start, front, end, inp, match_len):
@@ -190,6 +125,7 @@ def match_set(start, end, inp, splitted_words, match_len, regex_offset=0):
 
     """It matches the set the data
     present in small brackets"""
+    is_matched, start_len, end_len = 0,0,0
     word_offset = 0
     for i in splitted_words:
         to_check = i+end
@@ -216,14 +152,78 @@ def match_set(start, end, inp, splitted_words, match_len, regex_offset=0):
         vertex_offset_map[vertex_offset][inp] = [False, None, None]
     return [False, None, None]
 
+def match_star(start, front, end, inp, match_len, regex,regex_offset=0):
 
-def match(start, regex, inp, match_len=0, regex_offset=0):
+    """It matches the data in input 
+    which is suurounded by *
+    """
+    # print("Inside match_star :")
+    # print("start = ")
+    # print(start)
+    # print("front = ")
+    # print(front)
+    # print("end = ")
+    # print(end)
+    # print("inp = ")
+    # print(inp)
+    # print("match_len = ")
+    # print(match_len)
+    matched_len = 0
+
+    
+    regex_offset = len(regex_g) - len(regex)
+    print(regex_offset)
+    vertex_offset = index_vertex_map[regex_offset]
+
+    
+
+    # matches the letter by increasing inp
+    # by one at each step
+    while(1):
+        to_check = front * matched_len
+        [is_matched, start_len, end_len] = match(
+            start, to_check, inp, match_len,
+        )
+        
+        if(not is_matched):
+            break
+        else:
+            matched_len += 1
+            # break
+
+
+    # If the enumeration is more than requied
+    # it decreases the length 
+    while(matched_len >= 0):
+        to_check = (front * matched_len)+end
+        [is_matched, start_len, end_len] = match(
+            start, to_check, inp, match_len, regex_offset, regex
+        )
+        if(not is_matched):
+            matched_len -= 1
+        else:
+            if checkKey(vertex_offset_map, regex_offset):
+                vertex_offset_map[vertex_offset][inp] = [is_matched, start_len, end_len]
+            else:
+                vertex_offset_map[vertex_offset] = {}
+                vertex_offset_map[vertex_offset][inp] = [is_matched, start_len, end_len]
+
+            return [is_matched, start_len, end_len]
+
+    if checkKey(vertex_offset_map, regex_offset):
+        vertex_offset_map[vertex_offset][inp] = [False, None, None]
+    else:
+        vertex_offset_map[vertex_offset] = {}
+        vertex_offset_map[vertex_offset][inp] = [False, None, None]
+    return [False, None, None]
+
+def match(start, regex, inp, original_regex,match_len=0,regex_offset=0):
 
     """Matches the regex with inp"""
 
     # print(start)
-    print("regex_offset")
-    print(regex_offset)    
+    # print("regex_offset")
+    # print(regex_offset)    
     if(inp == "" and regex == ""):
         return [True, start, start+match_len]
 
@@ -247,20 +247,23 @@ def match(start, regex, inp, match_len=0, regex_offset=0):
             return [False, None, None]
 
     front, opr, end = split_inp(regex)
-    regexStateOffset = len(front)
+    print(front,opr,end)
+   
+    # regexStateOffset = len(front)
+
     if(opr == "*"):
         if(front[0] == "["):
             print("h1")
-            return match_star(start, front[1:-1], end, inp, match_len, regex_offset+1)
+            return match_star(start, front[1:-1], end, inp, match_len, regex,regex_offset+1)
         else:
             print("h2")
-            [is_matched, start_len, end_len] = match_star(start, front, end, inp, match_len, regex_offset)
-            print("is_matched")            
-            print(is_matched)
-            print("start_len")           
-            print(start_len)
-            print("end_len")            
-            print(end_len)
+            [is_matched, start_len, end_len] = match_star(start, front, end, inp, match_len, regex,regex_offset)
+            # print("is_matched")            
+            # print(is_matched)
+            # print("start_len")           
+            # print(start_len)
+            # print("end_len")            
+            # print(end_len)
             return [is_matched, start_len, end_len] 
 
     if(opr == "+"):
@@ -283,8 +286,16 @@ def match(start, regex, inp, match_len=0, regex_offset=0):
         for i in range(1, len(front)):
             if(inp[0] == front[i]):
                 # print(inp[0])
-                print("h6")
-                return match(start, end, inp[1:], match_len+1, regex_offset+1)
+                # print("h6")
+                regex_offset = len(regex_g) - len(regex)+i
+                print(front,end,"h6",regex_offset)
+                vertex_offset = index_vertex_map[regex_offset]
+                if checkKey(vertex_offset_map, vertex_offset):
+                    if checkKey(vertex_offset_map[vertex_offset], inp):
+                        return vertex_offset_map[vertex_offset][inp]
+                vertex_offset_map[vertex_offset][inp] = match(start, end, inp[1:], match_len+1, regex_offset+1)
+                return vertex_offset_map[vertex_offset][inp]
+                # return match(start, end, inp[1:], match_len+1, regex_offset+1)
 
     elif(opr == "("):
         splitted_words = front[1:-1].split("|")
@@ -294,12 +305,15 @@ def match(start, regex, inp, match_len=0, regex_offset=0):
     else:
         if(front[0] == inp[0] or front[0] == "."):
             # print(front,"hh")
-                vertex_offset = index_vertex_map[regex_offset]
-
-                if checkKey(vertex_offset_map, vertex_offset):
-                    if checkKey(vertex_offset_map[vertex_offset], inp):
-                        return vertex_offset_map[vertex_offset][inp]
-                return match(start, end, inp[1:], match_len+1, regex_offset+1)
+            regex_offset = len(regex_g) - len(regex)
+            print(front,"hh",regex_offset,regex,regex_g)
+            vertex_offset = index_vertex_map[regex_offset]
+            if checkKey(vertex_offset_map, vertex_offset):
+                if checkKey(vertex_offset_map[vertex_offset], inp):
+                    return vertex_offset_map[vertex_offset][inp]
+                    #  match(start, regex, inp, match_len=0, regex_offset=0,original_regex="A"):
+            vertex_offset_map[vertex_offset][inp] = match(start, end, inp[1:], match_len+1, regex_offset+1)
+            return vertex_offset_map[vertex_offset][inp]
 
     return [False, None, None]
 
@@ -330,7 +344,7 @@ def initialize_vertex_offset_map(regex, index = 0):
                 splitted_words = front[1:-1].split("|")
                 # word_len = 0
                 for word in splitted_words:
-                    initialize_vertex_offset_map(word, )
+                    initialize_vertex_offset_map(word,)
         else:
             vertex_count += 1
             print(vertex_count,"---",front)
@@ -352,21 +366,27 @@ def initialize_vertex_offset_map(regex, index = 0):
 def match_regex_inp(inp):
 
     start_time = time.time()
-    regex = "A(B|C+)+D"
+    regex = "A*C"
     # regex = "(a*)a"
     initialize_vertex_offset_map(regex)
+    print(vertex_offset_map)
+    print(index_vertex_map)
     count = 1
     for i in range(len(regex)):
         if ((regex[i] >= 'a' and regex[i] <= 'z') or (regex[i] >= 'A' and regex[i] <= 'Z') or regex[i] == '.'):
             index_vertex_map[i] = count
-            print(i,"======",count)
+            # print(i,"======",count)
             count+=1
     # for i in vertex_offset_map.keys():
     #     print(i)
     for i in parse(regex, inp):
         print("--- %s seconds ---" % (time.time() - start_time))
+        print(vertex_offset_map)
         return i[0]
-
-    print("--- %s seconds ---" % (time.time() - start_time))
-    return False
     
+    print(vertex_offset_map)
+    
+    # print("--- %s seconds ---" % (time.time() - start_time))
+    return False
+
+print(match_regex_inp("AAAC"))

@@ -182,16 +182,16 @@ def match(start,regex,inp,match_len = 0):
 
     
     front,opr,end = split_inp(regex)
-    print("front : ")
-    print(front)
-    print("opr : ")
-    print(opr)  
-    print("end : ")
-    print(end)
-    print("start : ")
-    print(start)
-    print("match_len : ")
-    print(match_len)
+    # print("front : ")
+    # print(front)
+    # print("opr : ")
+    # print(opr)  
+    # print("end : ")
+    # print(end)
+    # print("start : ")
+    # print(start)
+    # print("match_len : ")
+    # print(match_len)
     # print(front,opr,end)
 
     # print(inp)
@@ -259,8 +259,8 @@ import time
 def main():
 
     start_time = time.time()
-    regex = "A(B|C+)+D"
-    inp = "ACCCCCCX"
+    regex = "A[BC]D"
+    inp = "ABCD"
     # front,opr,end = split_inp(regex)
     # print(front,opr,end)
     # print(parse(regex,inp))
