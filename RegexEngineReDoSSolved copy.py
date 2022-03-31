@@ -129,6 +129,7 @@ def match_set(start, end, inp, splitted_words, match_len, regex_offset=0):
     word_offset = 0
     for i in splitted_words:
         to_check = i+end
+        
         vertex_offset = index_vertex_map[regex_offset + word_offset]
 
         if checkKey(vertex_offset_map, vertex_offset):
@@ -152,7 +153,7 @@ def match_set(start, end, inp, splitted_words, match_len, regex_offset=0):
         vertex_offset_map[vertex_offset][inp] = [False, None, None]
     return [False, None, None]
 
-def match_star(start, front, end, inp, match_len, regex,regex_offset=0):
+def match_star(start, front, end, inp, match_len, regex,regex_offset=0,same_offset = False):
 
     """It matches the data in input 
     which is suurounded by *
@@ -160,8 +161,11 @@ def match_star(start, front, end, inp, match_len, regex,regex_offset=0):
 
     matched_len = 0
 
-    
-    regex_offset = len(regex_g) - len(regex)
+    if(regex[0] == "["):
+        regex_offset = len(regex_g) - len(regex) + 1
+    else:
+        if(not same_offset):
+            regex_offset = len(regex_g) - len(regex)
     print(regex_offset)
     vertex_offset = index_vertex_map[regex_offset]
 
@@ -179,8 +183,8 @@ def match_star(start, front, end, inp, match_len, regex,regex_offset=0):
         if(not is_matched):
             break
         else:
-            # if(matched_len == 4):
-            #     break
+            if(matched_len == 1):
+                break
             matched_len += 1
             # break
 
@@ -245,7 +249,7 @@ def match(start, regex, inp,match_len=0,regex_offset=0,flag=False):
             return match_star(start, front[1:-1], end, inp, match_len, regex,regex_offset+1)
         else:
             print("h2")
-            [is_matched, start_len, end_len] = match_star(start, front, end, inp, match_len, regex,regex_offset)
+            [is_matched, start_len, end_len] = match_star(start, front, end, inp, match_len, regex,regex_offset,True)
             return [is_matched, start_len, end_len] 
 
     if(opr == "+"):
