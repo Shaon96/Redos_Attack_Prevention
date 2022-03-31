@@ -127,3 +127,52 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+/redos_ms_package/node_modules
+/redos_ms_package_solved/node_modules
+/redos_ms_package/build
+/redos_ms_package_solved/build
+
+# dependencies
+/redos_ms_package/node_modules
+/redos_ms_package/.pnp
+/redos_ms_package/.pnp.js
+
+# testing
+/redos_ms_package/coverage
+
+# production
+/redos_ms_package/build
+
+# misc
+/redos_ms_package/.DS_Store
+/redos_ms_package/.env.local
+/redos_ms_package/.env.development.local
+/redos_ms_package/.env.test.local
+/redos_ms_package/.env.production.local
+
+/redos_ms_package/npm-debug.log*
+/redos_ms_package/yarn-debug.log*
+/redos_ms_package/yarn-error.log*
+
+# dependencies
+/redos_ms_package_solved/node_modules
+/redos_ms_package_solved/.pnp
+/redos_ms_package_solved/.pnp.js
+
+# testing
+/redos_ms_package_solved/coverage
+
+# production
+/redos_ms_package_solved/build
+
+# misc
+/redos_ms_package_solved/.DS_Store
+/redos_ms_package_solved/.env.local
+/redos_ms_package_solved/.env.development.local
+/redos_ms_package_solved/.env.test.local
+/redos_ms_package_solved/.env.production.local
+
+/redos_ms_package_solved/npm-debug.log*
+/redos_ms_package_solved/yarn-debug.log*
+/redos_ms_package_solved/yarn-error.log*
