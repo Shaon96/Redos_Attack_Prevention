@@ -11,12 +11,8 @@
   align-items: center;
   display: flex;
   font-size: 18px;
+  overflow-x: auto;
   justify-content: space-between;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
